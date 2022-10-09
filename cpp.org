@@ -1,0 +1,1105 @@
+#+title: Cpp
+#+description: C++ Programming
+#+author: RP
+
+* Function
+** Function Calling
+*** Call by value
+#+begin_src C++
+  #include<iostream>
+  using namespace std;
+  int sum(int, int);
+  int main(){
+    int a=5,b=6;
+    int s=sum(a,b);
+    cout<<s;
+  }
+  int sum(int x, int y)
+  {return(x+y);}
+#+end_src
+
+#+RESULTS:
+: 11
+
+*** Call by address
+#+begin_src C++
+  #include<iostream>
+  using namespace std;
+  int sum(int *, int *);
+  int main(){
+    int a=5,b=6;
+    int s=sum(&a,&b);
+    cout<<s;
+  }
+  int sum(int *x, int *y)
+  {return(*x+*y);}
+#+end_src
+
+#+RESULTS:
+: 11
+
+*** Call by Reference
+#+begin_src C++
+  #include<iostream>
+  using namespace std;
+  int sum(int &, int &);
+  int main(){
+    int a=5,b=6;
+    int s=sum(a,b);
+    cout<<s;
+  }
+  int sum(int &x, int &y)
+  {return(x+y);}
+#+end_src
+
+** Default Arguments
+#+begin_src C++
+    #include<iostream>
+    using namespace std;
+    int add(int,int=0,int=0);
+    int main(){
+        int a,b,c;
+        a=5,b=6;//cin>>a>>b;
+        cout<<add(a,b)<<endl;
+        c=7;//cin>>a>>b>>c;
+        cout<<add(a,b,c);
+    }
+    int add(int x,int y,int z)
+    {return(x+y+z);}
+#+end_src
+
+#+RESULTS:
+| 11 |
+| 18 |
+
+** Function Overloading
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+int area(int,int);
+float area(int);
+int main(){
+    int r=5;
+    float A=area(r);
+    cout<<"area of circle: "<<A<<endl;
+    int l,b;
+    int a=area(5,6);
+    cout<<"area of rectangle: "<<a<<endl;
+    return 0;
+    }
+float area(int radius){return 3.14*radius*radius;}
+int area(int length,int breath){return 2*(length+breath);}
+#+end_src
+
+#+RESULTS:
+: area of circle: 78.5
+: area of rectangle: 22
+
+1. C++ tries to find an exact match.
+2. If no exact match is found, C++ tries to find a match through promotion
+  - Char, unsigned char, short is promoted to int
+  - Float is promoted to double
+3. If no promotion is found, C++ tries to find a match through standard conversion
+
+** Inline Function
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+inline void fun();
+int main(){
+    fun();
+    return 0;
+    }
+void fun(){cout<<"fun";}
+#+end_src
+
+#+RESULTS:
+: fun
+
+* Operator Overloading
+** Binary
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Complex{
+        int a,b;
+        public:
+            void set_data(int x,int y){a=x, b=y;}
+            void show_data(){cout<<a<<" + "<<b<<"i";}
+            //Complex add(Complex c) //aam zindegi
+            Complex operator +(Complex c) //mentos zindegi
+            {
+                Complex temp;
+                temp.a=a+c.a;
+                temp.b=b+c.b;
+                return(temp);
+            }
+        };
+    int main(){
+        Complex c1,c2,c3;
+        c1.set_data(3,4);
+        c2.set_data(5,6);
+        //c3=c1.add(c2); //aam zindegi
+        c3=c1+c2; // mentos zindegi [c3=c1.operator+(c2)]
+        c3.show_data();
+        return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 8 + 10i
+** Unary
+*** Single
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Complex{
+        int a,b;
+        public:
+            void set_data(int x,int y){a=x, b=y;}
+            void show_data(){cout<<a<<" + "<<b<<"i";}
+            Complex operator -()
+            {
+                Complex temp;
+                temp.a=-a;
+                temp.b=-b;
+                return(temp);
+            }
+        };
+    int main(){
+        Complex c1,c2;
+        c1.set_data(3,4);
+        c2=-c1; // [c2=c1.operator-()]
+        c2.show_data();
+        return 0;
+    }
+#+end_src
+*** Pre
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Integer{
+        int a;
+        public:
+            void set_data(int x){a=x;}
+            void show_data(){cout<<a<<endl;}
+            Integer operator ++()
+            {
+                Integer temp;
+                temp.a=++a;
+                return(temp);
+            }
+        };
+    int main(){
+        Integer c1,c2;
+        c1.set_data(3);
+        c2=++c1; // [c2=c1.operator++()]
+        c1.show_data();
+        c2.show_data();
+        return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 4
+: 4
+
+*** Post
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Integer{
+        int a;
+        public:
+            void set_data(int x){a=x;}
+            void show_data(){cout<<a<<endl;}
+            Integer operator ++(int)
+            {
+                Integer temp;
+                temp.a=a++;
+                return(temp);
+            }
+        };
+    int main(){
+        Integer c1,c2;
+        c1.set_data(3);
+        c2=c1++; // [c2=c1.operator++(int)]
+        c1.show_data();
+        c2.show_data();
+        return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 4
+: 3
+
+* Outside Class Function
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Complex{
+        int a,b;
+        public:
+            void set_data(int,int);
+            void show_data();
+    };
+    void Complex::set_data(int x,int y){a=x,b=y;}
+    void Complex::show_data(){cout<<a<<" "<<b;}
+    int main(){
+        Complex c1;
+        c1.set_data(3,4);
+        c1.show_data();
+        return 0;
+        }
+#+end_src
+* Static
+** Static Member Variable / Class Variable
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class a {
+    static const int x;
+    public:
+        void f() { cout << x << endl; }
+};
+const int a::x=12;
+int main(){
+    a a1;
+    a1.f();
+    }
+#+end_src
+
+#+RESULTS:
+: 12
+
+- Must be assign with some value.
+- If not assign value in class & not define ouside of class cause error(linking error).
+- Non-const static variable can't be assign in class.
+- Object independent, only one.
+
+** Static Member Function
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Account{
+    static float roi;
+    public:
+        static void set_data(float r){roi=r;}
+        void f(){cout<<roi;}
+    };
+float Account::roi;
+int main(){
+    Account::set_data(4.5f);
+    Account a1;
+    a1.f();
+    }
+#+end_src
+
+#+RESULTS:
+: 4.5
+
+- Access only static variable without create object.
+- Object independent, only one.
+- To use static function static variable must be define outside of class.
+
+* Constructor
+- Member function of class
+- Same name of class
+- no return
+- never static
+- solve initialization problem
+
+- When developer not create any constructor in class then, compiler create Default & Copy constuctor.
+- Compiler always call Default & Copy constuctor, when a object created.
+#+begin_src C++ :results output
+  #include<iostream>
+  using namespace std;
+  class Complex{
+      int a,b,*c;
+      public:
+	  Complex(int x,int y){a=x,b=y;} //Parameterize Constructor
+	  Complex(int k){a=k;}
+	  Complex(){a=0,b=0;} //Default Constructor
+	  Complex(Complex &c){a=c.a,b=c.b;} //Copy Constructor
+	  // Complex(Complex c){} //wrong Copy Constructor
+    Complex(){c=new int;} //Dynamic Constructor
+    // Dynammic constructor: when constructor has pointer that hold outside variable address.
+	  ~Complex(){cout<<"Destructor ";} //Destructor
+  };
+  int main(){
+      Complex c1=Complex(3,4),c2=5,c3,c4(3,8),c5(c1);
+      return 0;
+  }
+#+end_src
+* Friend Function
+- Access any member of class indirectly.
+- It has no caller object.
+- Should not be defined with membership label.
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Complex{
+        int a,b;
+        public:
+            void set_data(int x,int y){a=x,b=y;}
+            friend void fun(Complex);
+        };
+    void fun(Complex c){cout<<c.a+c.b;}
+    int main(){
+        Complex c1;
+        c1.set_data(3,4);
+        fun(c1);
+        return 0;
+        }
+#+end_src
+
+#+RESULTS:
+: 7
+
+- One friend function can become friend to more than one class.
+#+begin_src C++ :results output
+  #include<iostream>
+  using namespace std;
+  class B;
+  class A{
+      int a;
+      public:
+	  void set_data(int x){a=x;}
+	  friend void fun(A,B);
+      };
+  class B{
+      int b;
+      public:
+	  void set_data(int x){b=x;}
+	  friend void fun(A,B);
+      };
+  void fun(A a1,B b1){cout<<a1.a+b1.b;}
+  int main(){
+      A o1;
+      B o2;
+      o1.set_data(3);
+      o2.set_data(4);
+      fun(o1,o2);
+      return 0;
+      }
+#+end_src
+
+#+RESULTS:
+: 7
+
+- Member function of one class can become friend to another class.
+#+begin_src C++ :results output
+  #include<iostream>
+  using namespace std;
+  class B;
+  class A{
+      int a;
+      public:
+	void fun();
+	// {
+	// 	B b1;
+	// 	b1.b=100;
+	// 	cout<<b1.b<<endl;
+	// }
+      };
+  class B{
+      int b;
+      public:
+	  friend void A::fun();
+      };
+   void A::fun()
+      {
+	  B b1;
+	  b1.b=100;
+	  cout<<b1.b<<endl;
+      }
+  int main(){
+      A a1;
+      a1.fun();
+      return 0;
+      }
+#+end_src
+
+#+RESULTS:
+: 100
+
+* Friend Operator Overloading
+** Binary
+*** Addition
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Complex{
+        int a,b;
+        public:
+            void set_data(int x,int y){a=x, b=y;}
+            void show_data(){cout<<a<<" + "<<b<<"i";}
+            friend Complex operator +(Complex,Complex);
+        };
+    Complex operator +(Complex X,Complex Y)
+        {
+            Complex temp;
+            temp.a=X.a+Y.a;
+            temp.b=X.b+Y.b;
+            return(temp);
+        }
+    int main(){
+        Complex c1,c2,c3;
+        c1.set_data(3,4);
+        c2.set_data(5,6);
+        c3=c1+c2; // [c3=operator+(c1,c2)]
+        c3.show_data();
+        return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 8 + 10i
+
+*** Input & Output
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Complex{
+        int a,b;
+        public:
+            void set_data(int x,int y){a=x, b=y;}
+            void show_data(){cout<<a<<" + "<<b<<"i";}
+            friend ostream &operator <<(ostream &,Complex);
+            // friend istream &operator <<(istream &,Complex &);
+        };
+        ostream &operator <<(ostream &dout,Complex C){
+                dout<<C.a<<" "<<C.b<<endl;
+                return(dout);
+            }
+        // istream &operator <<(istream &din,Complex &C){
+        //         din<<C.a<<C.b;
+        //         return(din);
+        //     }
+    int main(){
+        int a=2;
+        cout<<a<<endl; // [cout.operator<<(a)]
+        Complex c1,c2;
+        c1.set_data(3,4);
+        c2.set_data(5,6);
+        cout<<c1<<c2; // [operator<<cout,c1)]
+        return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 2
+: 3 4
+: 5 6
+
+** Unary
+*** Single
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Complex{
+        int a,b;
+        public:
+            void set_data(int x,int y){a=x, b=y;}
+            void show_data(){cout<<a<<" + "<<b<<"i";}
+            friend Complex operator -(Complex);
+            };
+        Complex operator -(Complex X)
+        {
+            Complex temp;
+            temp.a=-X.a;
+            temp.b=-X.b;
+            return(temp);
+        }
+    int main(){
+        Complex c1,c2;
+        c1.set_data(3,4);
+        c2=-c1; // [c2=operator-(c1)]
+        c2.show_data();
+        return 0;
+    }
+#+end_src
+*** Pre
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Integer{
+        int a;
+        public:
+            void set_data(int x){a=x;}
+            void show_data(){cout<<a<<endl;}
+            friend Integer operator ++(Integer &);
+        };
+            Integer operator ++(Integer &X)
+            {
+                Integer temp;
+                temp.a=++X.a;
+                return(temp);
+            }
+    int main(){
+        Integer c1,c2;
+        c1.set_data(3);
+        c2=++c1; // [c2=operator++(c1)]
+        c1.show_data();
+        c2.show_data();
+        return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 4
+: 4
+
+*** Post
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class Integer{
+        int a;
+        public:
+            void set_data(int x){a=x;}
+            void show_data(){cout<<a<<endl;}
+            friend Integer operator ++(Integer &);
+        };
+        Integer operator ++(Integer &X)
+        {
+            Integer temp;
+            temp.a=X.a++;
+            return(temp);
+        }
+    int main(){
+        ostream &gout=cout;
+        Integer c1,c2;
+        c1.set_data(3);
+        c2=++c1; // [c2=operator++(c1)]
+        c1.show_data();
+        c2.show_data();
+        return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 4
+: 3
+
+* Inheritance
+class Base_Class{};
+class Derived_Class: Visibility_Mode Base_Class{};
+
+- all members of Base_Class is available for Derived_Class. But not accessible in some cases.
+
+** Visibility Modes
+- Private
+- Protected
+- Public
+
+1. Private members of Base_Class can't be accessible by Derived_Class.
+2. class Derived_Class: private Base_Class{};
+   then, protected & public members of Base_Class is private member of Derived_Class.
+3. class Derived_Class: protected Base_Class{};
+   then, protected & public members of Base_Class is protected member of Derived_Class.
+4. class Derived_Class: public Base_Class{};
+   then, protected & public members of Base_Class is protected & public member of Derived_Class.
+
+#+begin_src C++ :results output
+    #include<iostream>
+    using namespace std;
+    class array{
+        // int a[10];
+        public:
+            int a[10];
+            void insert(int index, int value)
+            {a[index]=value;}
+        };
+    class Stack: private array{
+        int top=0;
+        public:
+            void push(int value)
+            {insert(top,value);
+                top++;}
+            void print(){
+                for(int i=0;a[i]!='\0';i++)
+                    cout<<a[i]<<endl;
+                }
+        };
+    int main(){
+        Stack s1;
+        s1.push(34);
+        //s1.insert(1,56); //error
+        s1.print();
+        return 0;
+        }
+#+end_src
+
+#+RESULTS:
+: 34
+: 32607
+: -1997211487
+: 32607
+: -1996276072
+: 32607
+: -1997422240
+: 32607
+
+** Inheritance Constructor & Destructor
+
+1) Constructor in inheritance
+   - Call first child then, parent
+   - Exec first parent then, child
+
+2) Destructure in inheritance
+   - Call & exec first child then, parent
+
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class A{
+    int a;
+    public:
+        A(int k){a=k;cout<<"value of A "<<a<<endl;}
+        ~A(){cout<<"A Destructor"<<endl;}
+    };
+class B: public A{
+    int b;
+    public:
+        B(int x,int y):A(x){b=y;cout<<"value of B "<<x<<" "<<y<<endl;}
+        ~B(){cout<<"B Destructor"<<endl;}
+    };
+int main(){
+    B b1(5,8);
+    }
+#+end_src
+
+#+RESULTS:
+: value of A 5
+: value of B 5 8
+: B Destructor
+: A Destructor
+
+** Method Overriding & Method Hiding
+
+- Virtual Function solve Method Overriding problem not Method Hiding problem.
+#+begin_src C++ :results output
+#include<iostream>
+class A{
+    //*_vptr
+    public:
+        void f1(){}
+        void f2(){}
+        virtual void f3(){}
+        virtual void f4(){}
+    };
+class B: public A{
+    public:
+        void f1(){} //Method Overriding
+        void f2(int x){} //Method Hiding
+        void f3(){}
+        void f4(int x){}
+    };
+int main(){
+    B b1;
+    b1.f1(); //B
+    // b1.f2(); //error
+    b1.f2(4); //B
+    A *p;
+    p=&b1;
+    // p->*_vptr->vtable[f3,f4,...]
+    p->f1(); //Early Binding //A
+    p->f2(); //Early Binding //A
+    p->f3(); //Late Binding //B ; without virtual function A
+    p->f4(); //Late Binding //A
+    // p->f4(5); //error
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+
+** Abstract Class
+
+- We can't create object of Abstract class.
+#+begin_src C++ :results output
+#include<iostream>
+class A{
+    public:
+        virtual void fun()=0; //Pure virtual function
+    };
+class B: public A{
+    public:
+        virtual void fun()=0;
+    };
+class C:public B{
+    public:
+        void fun(){}
+    };
+int main(){
+    // A a1; //error
+    // B b1; //error
+    C c1;
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+
+* This
+- This is a local object pointer in every instance member function containing address of the caller object.
+- This pointer is used to refer caller object in member function.
+- This pointer can't modify.
+
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Box{
+    int l,b,h; //this
+    public:
+        void set_data(int l,int b,int h)
+        {this->l=l,this->b=b,this->h=h;}
+        void show_data(){cout<<l<<" "<<b<<" "<<h;}
+    };
+int main(){
+    Box smallbox;
+    smallbox.set_data(12,10,15);
+    smallbox.show_data();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 12 10 15
+
+* New & Delete
+- C -> Complex *ptr=(struct Complex *)malloc(sizeof(struct Complex));
+    -> int x;scanf("%d",&x);int *p=(int *)malloc(x*sizeof(int));
+    -> free(ptr);free(p);
+- C++ -> Complex *ptr=new Complex;
+      -> int x;cin>>x;int *p=new int[x];
+      -> delete ptr;delete p[];
+
+* Template
+** Function Template
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+template <class X,class Y>
+X max(X a, Y b){
+    return (a>b)?a:b;
+    }
+int main(){
+    cout<<max(4.9,5);
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 5
+
+** Class Template || Generic Class
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+template <class X> class ArrayList{
+    struct ControlBlock{
+        int capacity;
+        int *arr;
+        };
+    ControlBlock *s;
+    public:
+        ArrayList(int cap){
+            s=new ControlBlock;
+            s->capacity=cap;
+            s->arr=new int[cap];
+            }
+        void addElement(int index,X data){
+            if(index>=0 && index<s->capacity)
+            {s->arr[index]=data;}
+            else{cout<<"Array index is not valid";}
+            }
+        void viewList(){
+            for(int i=0;i<s->capacity;i++){
+                cout<<s->arr[i]<<endl;
+                }
+            }
+    };
+int main(){
+    ArrayList <int>list1(4);
+    list1.addElement(0,23);
+    list1.addElement(1,43);
+    list1.viewList();
+    }
+#+end_src
+
+#+RESULTS:
+: 23
+: 43
+: 0
+: 0
+
+* File Handling
+** Write
+#+begin_src C++ :results output
+#include<iostream>
+#include<fstream>
+using namespace std;
+int main(){
+    // ofstream fout;
+    fstream fout;
+    fout.open("file.txt",ios::app|ios::binary);
+    fout<<"Hello \\nRP";
+    fout.close();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+
+** Read
+#+begin_src C++ :results output
+#include<iostream>
+#include<fstream>
+using namespace std;
+int main(){
+    // ifstream fin;
+    fstream fin;
+    char ch;
+    fin.open("file.txt",ios::in);
+    while(!fin.eof()){
+        fin>>ch;
+        cout<<ch;
+        }
+    fin.close();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: Hello\nRPP
+* Initializers
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Dummy{
+    int a,b;
+    const int x;
+    int &y;
+    public:
+        Dummy(int &n):a(2),b(3),x(5),y(n){}
+    };
+int main(){
+    int m=6;
+    Dummy d1(m);
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+
+* Copy
+** Shallow Copy
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Dummy{
+    int a,b,*p;
+    public:
+        void set_data(int x,int y,int z)
+        {a=x,b=y,*p=z;}
+        void show_data()
+        {cout<<"a:"<<a<<" b:"<<b<<" *p:"<<*p<<endl;}
+        Dummy(){p=new int;}
+        Dummy(Dummy &d)
+        {a=d.a,b=d.b,p=d.p;}
+    };
+int main(){
+    Dummy d1;
+    d1.set_data(3,4,5);
+    Dummy d2=d1;
+    d2.show_data();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: a:3 b:4 *p:5
+
+** Deep Copy
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Dummy{
+    int a,b,*p;
+    public:
+        void set_data(int x,int y,int z)
+        {a=x,b=y,*p=z;}
+        void show_data()
+        {cout<<"a:"<<a<<" b:"<<b<<" *p:"<<*p<<endl;}
+        Dummy(){p=new int;}
+        Dummy(Dummy &d){
+            a=d.a,b=d.b;
+            p=new int;
+            *p=*(d.p);
+        }
+    };
+int main(){
+    Dummy d1;
+    d1.set_data(3,4,5);
+    Dummy d2=d1;
+    d2.show_data();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: a:3 b:4 *p:5
+
+* Type Conversion
+** Primitive to Class
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Complex{
+    int a,b;
+    public:
+        Complex(){}
+        Complex(int k){a=k,b=0;}
+        void set_data(int x,int y)
+        {a=x,b=y;}
+        void show_data()
+        {cout<<"a:"<<a<<" b:"<<b;}
+    };
+int main(){
+    Complex c1;
+    int x=5;
+    c1=x; //c1=Complex(x)
+    c1.show_data();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: a:5 b:0
+
+** Class to Primitive
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Complex{
+    int a,b;
+    public:
+        void set_data(int x,int y)
+        {a=x,b=y;}
+        void show_data()
+        {cout<<"a:"<<a<<" b:"<<b;}
+        operator int(){return a;}
+    };
+int main(){
+    Complex c1;
+    c1.set_data(3,4);
+    int x;
+    x=c1; //x=c1.operator int()
+    cout<<"x:"<<x<<endl;
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: x:3
+
+** Class to Another Class
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Product{
+    int a,b;
+    public:
+        void set_data(int x,int y)
+        {a=x,b=y;}
+        int getA(){return a;}
+        int getB(){return b;}
+    };
+class Item{
+    int m,n;
+    public:
+        Item(){}
+        Item(Product p){
+            m=p.getA();
+            n=p.getB();
+            }
+        void show_data()
+        {cout<<"1st value : "<<m<<endl<<"2nd value : "<<n<<endl;}
+    };
+int main(){
+    Product p1;
+    Item i1;
+    p1.set_data(3,4);
+    i1=p1; //i1.Item(p1)
+    i1.show_data();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: 1st value : 3
+: 2nd value : 4
+* Exception Handling
+- Try and catch are linked, if anyone is missing then compile time error.
+- Throw return object into catch arguments, if catch missing then runtime auto terminate.
+- Throw must be used with values, otherwise runtime auto terminate.
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+void fun(){throw 10;}
+int main(){
+    int i=1;
+    try{
+        if(i==1){fun();}
+        if(i==2){throw "Hello";}
+        if(i==3){throw 4.5;}
+        cout<<"In try";
+        }
+    // catch(int e){cout<<"Exception no: "<<e;}
+    // catch(double e){cout<<"Exception no: "<<e;}
+    // catch(char const* e){cout<<"Exception no: "<<e;}
+    catch(...){cout<<"Exception no: ";}
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: Exception no:
+
+* Namespace
+- Namespace is not a class, you can't create object of namespace. It is group of declaration.
+- You can use an alias name for your namespace. Example: namespace ms=MySpace;
+- There can be unnamed namespace too.
+- Namespace can be extended.
+  Example: file1.h and file2.h both have same namespace MySpace, then compiler create one namespace MySpace and all variables, functions & classes put on it.
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+namespace ISpace{
+    int a;
+    void f1();
+    }
+namespace MySpace{
+    using namespace ISpace;
+    class Hello{
+        public:
+            void hello();
+        };
+    }
+void ISpace::f1(){cout<<"value of a: "<<ISpace::a<<endl;}
+void MySpace::Hello::hello(){cout<<"Hello";}
+int main(){
+    MySpace::a=5;
+    MySpace::f1();
+    MySpace::Hello obj;
+    obj.hello();
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: value of a: 5
+: Hello

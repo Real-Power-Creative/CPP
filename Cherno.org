@@ -1,0 +1,205 @@
+* Compile & Link
+g++ -Wall -Werror -std=c++14 test.cpp -o test
+* Preprocessor
+- #include "any.h"
+- #define find replace
+- #if 1 /*code*/ #endif
+** Windows(Visual Studio)
+right click on project -> Properties -> C/C++ -> Preprocessor -> Preprocess to a file:yes
+** Linux
+g++ -E test.cpp -o hello.i
+g++ hello.i -o test
+* Compiler
+** Windows
+right click on project -> Properties -> C/C++ -> Output Files -> Assembler Output:Assembly-Only-Listing
+** Linux
+g++ test.cpp -S -o hello.s
+* Optimization(-O,-O0,-O1,-O2,-O3,-Os,-Ofast)
+** Windows
+right click on project -> Properties -> C/C++ -> Configuration:Debug -> Optimization:Maximze Speed
+right click on project -> Properties -> C/C++ -> Code Generation -> Basic Runtime Checks:Default
+** Linux
+g++ test.cpp -S -O2 -o hello.s
+** Pragma
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
+* Linker
+** Custom entry point
+*** Windows
+right click on project -> Properties -> Linker -> Advanced -> Entry Point:(type function name)
+*** Linux
+**** Only for C
+#+begin_src C :results output
+#include <stdio.h>
+#include <stdlib.h>
+int mymain() {
+    printf("hello");
+    exit(0);
+}
+#+end_src
+
+- gcc -nostartfiles -Wl,--entry=mymain -o main.out main.c
+
+** Linking Error(g++ main.cpp Math.cpp -o main)
+*** Wrong Declaration
+- Wrong return type
+- Wrong parameter type
+- Wrong parameter number
+*** Declaration but no Defination
+- Without defination function declaration is not cause error(linking error), you have to call to get error. You don't need to use main function, any kind of function use to get error.
+*** Conflict
+- In Math.cpp
+#+begin_src C++ :results output
+int math(int a,int b){
+    int result = a+b;
+    return result;
+}
+#+end_src
+- In main.cpp
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+static int math(int,int);
+int main()
+{
+    cout<<"hello "<<math(2,3);
+    return 0;
+}
+int math(int a,int b){
+    return a*b;
+}
+#+end_src
+
+#+RESULTS:
+: hello 6
+
++ Static function without class means this function for made only for this cpp file.
+
+- In Math.cpp
+#+begin_src C++ :results output
+static int math(int a,int b){
+    int result = a+b;
+    return result;
+}
+#+end_src
+- In main.cpp
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+int math(int,int);
+int main()
+{
+    cout<<"hello"<<math(2,3);
+    return 0;
+}
+#+end_src
+- Result is linking error
+
+*** With Defination header file
+- In log.h
+#+begin_src C++ :results output
+void log(const char* message){std::cout<<message<<std::endl;}
+#+end_src
+- In Math.cpp
+#+begin_src C++ :results output
+#include "log.h"
+int math(int a,int b){
+    log("math");
+    int result = a+b;
+    return result;
+}
+#+end_src
+- In main.cpp
+#+begin_src C++ :results output
+#include<iostream>
+#include "log.h"
+using namespace std;
+static int math(int,int);
+int main()
+{
+    log("main");
+    cout<<"hello "<<math(2,3);
+    return 0;
+}
+#+end_src
+- Result is linking error
+- Use static or Inline(not always work, it's a requst) before function defination in log.h
+
+* Variables
+- Char change numeric value to alphabet through ascii, int change alphabet value to numeric through ascii.
+- Use f to define variable as a float, or it consider as double.
+- Bit can't be represent as a address, only bytes can.
+* Loop
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+int main(){
+  int i = 0;
+  bool condition = true;
+  for (; condition;) {
+    cout << "ok" << endl;
+    i++;
+    if (!(i < 5)) {
+      condition = false;
+    }
+  }
+  return 0;
+}
+#+end_src
+
+#+RESULTS:
+: ok
+: ok
+: ok
+: ok
+: ok
+* others
+** Pointer
+int var = 8;
+double* ptr = (double*)&var;
+void* ptr = &var;
+*ptr = 10; //error
+
+char* buffer = new char[8];
+memset(buffer,0,8);
+
+* Array vs Pointer
+- Array allocate memory and hold address but, pointer just hold address
+Yes strcmp should be used there but it works in the case because when he wrote "Hello" in the if condition that is a character constant in the static memory and the variable pointer ptr points to a "Hello" in the same static memory and they basically have the same address, so basically he just compared the address that ptr holds to the address of "Hello" and in the static memory they both are at the same address.
+To better understand this consider the following code:
+#+begin_src C++ :results output
+#include<iostream>
+int main(){
+    const char *ptr = "Hello World!";
+    const char *ptr2= "Hello World!";
+    if (ptr == ptr2)
+        std::cout << "Same!";
+    else
+        std::cout << "Not Same!";
+    return 0;
+}
+#+end_src
+
+#+RESULTS:
+: Same!
+
+This will print Same! because "Hello World!" is a character constant and stored in the static memory and both the pointers point to the same address hence ptr is infact equal to ptr2  ( the address they hold is same).
+Now consider this code.
+#+begin_src C++ :results output
+#include<iostream>
+int main(){
+    const char ptr[] = "Hello World!";
+    const char ptr2[] = "Hello World!";
+    if (ptr == ptr2)
+        std::cout << "Same!";
+    else
+        std::cout << "Not Same!";
+    return 0;
+}
+#+end_src
+
+#+RESULTS:
+: Not Same!
+
+This will give "Not Same!" because this time it is not a character constant it is a character array and it is stored on the stack and both pointers point to a different address.
+So this time ptr is not holding the same address as ptr2 though the content is same.
