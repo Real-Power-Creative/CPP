@@ -285,10 +285,12 @@ using namespace std;
 class Account{
     static float roi;
     public:
-        static void set_data(float r){roi=r;}
+        // static void set_data(float r){roi=r;}
+        static void set_data(float);
         void f(){cout<<roi;}
     };
 float Account::roi;
+void Account::set_data(float r){roi=r;}
 int main(){
     Account::set_data(4.5f);
     Account a1;
@@ -312,6 +314,7 @@ int main(){
 
 - When developer not create any constructor in class then, compiler create Default & Copy constuctor.
 - Compiler always call Default & Copy constuctor, when a object created.
+** Public Constructor
 #+begin_src C++ :results output
   #include<iostream>
   using namespace std;
@@ -332,6 +335,88 @@ int main(){
       return 0;
   }
 #+end_src
+** Private Construtor
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class A{
+    int a,b;
+    static int k;
+    A(){a=2,b=3;}
+    public:
+        void print(){cout<<a<<b;}
+        static A* getInstance(){
+            if(k==0){
+                A *a = new A;
+                k++;
+                return(a);
+                }
+            else return(NULL);
+            }
+    };
+int A::k=0;
+int main(){
+    A *a1;
+    a1 = A::getInstance(); // Singleton object
+    a1->print();
+
+    A *a2;
+    a2 = A::getInstance();
+    if(a2!=NULL) a2->print();
+    else cout<<"object not created";
+    }
+#+end_src
+
+#+RESULTS:
+: 23object not created
+
+#+begin_src C++ :results output
+#include <iostream>
+using namespace std;
+
+// class A
+class A{
+private:
+    A(){
+       cout << "constructor of A\n";
+    }
+    friend class B; // comment out this line will be error
+};
+class B{
+public:
+    B(){
+        A a1;
+        cout << "constructor of B\n";
+    }
+};
+int main(){
+    B b1;
+}
+#+end_src
+
+#+RESULTS:
+: constructor of A
+: constructor of B
+
+** Delete Compilar Constructor
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class numprint{
+    int a;
+    public:
+    numprint()=delete;
+    numprint(int a1):a(a1){cout<<a;}
+    };
+int main(){
+    numprint n1(5);
+    }
+#+end_src
+
+#+RESULTS:
+: 5
+
+- I use delete when I want to assure that a class is called with an initializer. I consider it as a very elegant way to achieve this without runtime checks.
 * Friend Function
 - Access any member of class indirectly.
 - It has no caller object.
