@@ -174,6 +174,10 @@ void fun(){cout<<"fun";}
         return 0;
     }
 #+end_src
+
+#+RESULTS:
+: -3 + -4i
+
 *** Pre
 #+begin_src C++ :results output
     #include<iostream>
@@ -253,6 +257,10 @@ void fun(){cout<<"fun";}
         return 0;
         }
 #+end_src
+
+#+RESULTS:
+: 3 4
+
 * Static
 ** Static Member Variable / Class Variable
 #+begin_src C++ :results output
@@ -328,13 +336,15 @@ int main(){
 	  // Complex(Complex c){} //wrong Copy Constructor
     Complex(){c=new int;} //Dynamic Constructor
     // Dynammic constructor: when constructor has pointer that hold outside variable address.
-	  ~Complex(){cout<<"Destructor ";} //Destructor
   };
   int main(){
       Complex c1=Complex(3,4),c2=5,c3,c4(3,8),c5(c1);
       return 0;
   }
 #+end_src
+
+#+RESULTS:
+
 ** Private Construtor
 #+begin_src C++ :results output
 #include<iostream>
@@ -417,6 +427,45 @@ int main(){
 : 5
 
 - I use delete when I want to assure that a class is called with an initializer. I consider it as a very elegant way to achieve this without runtime checks.
+* Destructor
+** Public Destructor
+#+begin_src C++ :results output
+  #include<iostream>
+  using namespace std;
+  class Complex{
+      int a,b,*c;
+      public:
+	  ~Complex(){cout<<"Destructor ";} //Destructor
+  };
+  int main(){
+      Complex c1;
+      return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: Destructor
+** Private & Delete Destructor
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Complex{
+    private:
+        ~Complex(){}
+    };
+class Integer{
+    private:
+        ~Integer()=delete;
+    };
+int main(){
+    Complex *c1=new Complex;
+    Integer *i1=new Integer;
+    Complex &c2=*(new Complex);
+    }
+#+end_src
+
+#+RESULTS:
+
 * Friend Function
 - Access any member of class indirectly.
 - It has no caller object.
