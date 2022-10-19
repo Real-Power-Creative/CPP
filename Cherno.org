@@ -272,3 +272,21 @@ enum class CppEditor
     QtCreator
 };
 #+end_src
+
+#+begin_src C++ :results output
+#include<iostream>
+using std::cout;
+class animal {
+public:
+    enum pet { cat, dog, mouse };
+    pet mypet=dog;
+};
+int main(){
+    if (animal::mouse == 2) {
+    cout << "hello";
+    }
+}
+#+end_src
+
+#+RESULTS:
+: hello
