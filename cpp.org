@@ -1,6 +1,7 @@
 #+title: Cpp
 #+description: C++ Programming
 #+author: RP
+#+STARTUP: fold
 
 * Function
 ** Function Calling
