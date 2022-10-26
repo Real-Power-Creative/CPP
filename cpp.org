@@ -812,6 +812,34 @@ int main(){
 : B Destructor
 : A Destructor
 
+** Overriding (Virtual Function)
+#+begin_src C++ :results output
+#include<iostream>
+using std::string;using std::cout;using std::endl;
+class entity{
+    public:
+        virtual string getname(){return "entity";}
+    };
+class player:public entity{
+    string player_name;
+    public:
+        player(string name):player_name(name){}
+        string getname() override {return player_name;}
+    };
+void printname(entity *e)
+    {cout<<e->getname()<<endl;}
+int main(){
+    entity e;
+    printname(&e);
+    player p("RP");
+    printname(&p);
+    }
+#+end_src
+
+#+RESULTS:
+: entity
+: RP
+
 ** Method Overriding & Method Hiding
 
 - Virtual Function solve Method Overriding problem not Method Hiding problem.
@@ -850,7 +878,6 @@ int main(){
 #+end_src
 
 #+RESULTS:
-
 ** Abstract Class
 
 - We can't create object of Abstract class.
@@ -1238,3 +1265,50 @@ int main(){
 #+RESULTS:
 : value of a: 5
 : Hello
+
+* String
+#+begin_src C++ :results output
+#include<iostream>
+// using namespace std;
+using std::cout,std::endl,std::string;
+int main(){
+    string s1= "hello";
+    string s2;
+    s2=s1;//strcpy(s2,s1)
+    cout<<s2<<endl;
+    int i=s2>s1;//int i= strcmp(s2,s1)
+    cout<<i<<endl;
+    string s3;
+    s3=s1+s2;//strcpy(s3,strcat(s1,s2))
+    cout<<s3<<endl;
+    }
+#+end_src
+
+#+RESULTS:
+: hello
+: 0
+: hellohello
+
+- String class support many constructor, some of them are
+  - string()
+  - string(const char *str)
+  - string(const char &str)
+
+#+begin_src C++ :results output
+#include<iostream>
+using std::string;
+using namespace std::string_literals;
+int main(){
+    // same
+    string s0 = "hello";
+    string s1("hello");
+    string s2 = string("hello");
+    s1+=s2; //operation
+
+    // same
+    string name0 = string("Real") + "hello";
+    string name1 = "Real"s + "hello";
+    }
+#+end_src
+
+#+RESULTS:
