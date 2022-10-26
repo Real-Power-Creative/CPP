@@ -291,3 +291,49 @@ int main(){
 
 #+RESULTS:
 : hello
+
+* Size of Int
+#+begin_src C++ :results output
+#include<iostream>
+using std::cout;
+int main(){
+    cout<<sizeof(int16_t);
+    }
+#+end_src
+
+#+RESULTS:
+: 2
+* String Literals
+#+begin_src C++ :results output
+#include<iostream>
+using std::cout;
+int main(){
+    char *name = (char*)"Real"; // not changable
+    char name1[] = "Poser"; // changable
+    name1[2]= 'w';
+    cout<<name<<*(name+2)<<name1;
+    }
+#+end_src
+
+#+RESULTS:
+: RealaPower
+
+#+begin_src C++ :results output
+#include<iostream>
+using std::string;
+int main(){
+    const char *name0 = u8"Real"; // 1 bytes
+    const wchar_t *name1 = L"Real"; // 2 or 4 bytes, compilar decide
+    const char16_t *name2 = u"Real"; // 2 bytes
+    const char32_t *name3 = U"Real"; // 4 bytes
+    const char *ex = R"(line1
+        line2
+        line3)"; // without escape sequence
+    std::cout<<ex;
+
+    string name4 = u8"Real"; // 1 bytes
+    std::wstring name5 = L"Real"; // 2 or 4 bytes, compilar decide
+    std::u16string name6 = u"Real"; // 2 bytes
+    std::u32string name7 = U"Real"; // 4 bytes
+    }
+#+end_src
