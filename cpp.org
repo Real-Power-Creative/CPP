@@ -1312,3 +1312,61 @@ int main(){
 #+end_src
 
 #+RESULTS:
+
+* Const
+#+begin_src C++ :results output
+#include<iostream>
+using std::cout,std::endl;
+int main(){
+    const int x=5; //for store address must use (pointer to const)
+    int y=3;
+
+    int const *p1; //pointer to const
+    p1=&x;
+    p1=&y;
+    cout<<x<<endl;
+    cout<<*p1<<endl;
+
+    int *const p2=&y; //const pointer
+    cout<<*p2<<endl;
+
+    }
+#+end_src
+
+#+RESULTS:
+: 5
+: 3
+: 3
+
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Foo{
+    int a=2, *b;
+    int mutable var;
+    public:
+        int getA() const{ // this function can't modify any member variable
+            // a=5; //error
+            var = 3;
+            return a;
+            }
+        int const* const getB() const{
+            // 1st const: whatever this function return can't modify whatever it points
+            // 2st const: whatever this function return can't be modified when it use
+            // 3st const: whatever this function return can't be modified in this function
+            return b;
+            }
+    };
+void print(const Foo &f1){ //can't change cbject variable, but if you use a non-const function you can change variable's value, so you must be use a const function.
+    cout<<f1.getA()<<endl;
+    }
+int main(){
+    Foo obj;
+    // const int &x=obj.getB();
+    // x++;
+    print(obj);
+    }
+#+end_src
+
+#+RESULTS:
+: 2
