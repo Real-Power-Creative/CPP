@@ -238,6 +238,44 @@ void fun(){cout<<"fun";}
 #+RESULTS:
 : 4
 : 3
+** Functor
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class sqar{
+    int var;
+    public:
+    sqar(){}
+    sqar(int val):var{val}{}
+    int operator()(int i)
+        {return i*var;}
+    };
+int main(){
+    sqar s(6);
+    cout<<s(2)<<endl;
+    cout<<s.operator()(3)<<endl;
+    }
+#+end_src
+
+#+RESULTS:
+: 12
+: 18
+* Lambda Function
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+int main(){
+    auto l=[n=2]()mutable{n++;return n*2;};
+    cout<<l();
+    // cout<<[n=2](){return n*2;}();
+    auto a=[](int num){return num*2;};
+    cout<<a(3);
+    // cout<<[](int num){return num*2;}(3);
+    }
+#+end_src
+
+#+RESULTS:
+: 666
 
 * Outside Class Function
 #+begin_src C++ :results output
