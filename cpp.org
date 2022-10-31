@@ -275,7 +275,7 @@ int main(){
 #+end_src
 
 #+RESULTS:
-: 666
+: 66
 
 * Outside Class Function
 #+begin_src C++ :results output
