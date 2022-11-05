@@ -493,6 +493,31 @@ int main(){
 : 5
 
 - I use delete when I want to assure that a class is called with an initializer. I consider it as a very elegant way to achieve this without runtime checks.
+* Constructor Overloading
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class person{
+    string name;
+    int age;
+    public:
+        explicit person(const string& n):name{n},age(-1){}
+        explicit person(int a):name("unknown"),age(a){}
+    };
+void print(const person& p){}
+int main(){
+    // person p1= string("Real");
+    person p1(string("Real"));
+    // person p2= 25;
+    person p2(25);
+    print((person)"Qasl");
+    // print(22);
+    print(person(22));
+    }
+#+end_src
+
+#+RESULTS:
+
 * Destructor
 ** Public Destructor
 #+begin_src C++ :results output
@@ -1003,7 +1028,7 @@ int main(){
 - C++ -> Complex *ptr=new Complex;
       -> int x;cin>>x;int *p=new int[x];
       -> delete ptr;delete p[];
-
+- new & delete calls constructor & destructor
 * Template
 ** Function Template
 #+begin_src C++ :results output
@@ -1090,11 +1115,14 @@ int main(){
     // ifstream fin;
     fstream fin;
     char ch;
+    string s;
     fin.open("file.txt",ios::in);
     while(!fin.eof()){
         fin>>ch;
         cout<<ch;
         }
+    getline(fin,s);
+    cout<<endl<<s;
     fin.close();
     return 0;
     }
@@ -1121,6 +1149,37 @@ int main(){
 #+end_src
 
 #+RESULTS:
+
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class example1{
+    public:
+        example1(){cout<<"ex1 default constructor"<<endl;}
+        example1(int a){cout<<"ex1 parameterise constructor"<<endl;}
+    };
+class example2{
+    public:
+        example2(){cout<<"ex2 default constructor"<<endl;}
+        example2(int a){cout<<"ex2 parameterise constructor"<<endl;}
+    };
+class Example{
+    example1 e1;
+    example2 e2;
+    public:
+        Example():e2(example2(4)){
+            e1=example1(3);
+            }
+    };
+int main(){
+    Example hello;
+    }
+#+end_src
+
+#+RESULTS:
+: ex1 default constructor
+: ex2 parameterise constructor
+: ex1 parameterise constructor
 
 * Copy
 ** Shallow Copy
