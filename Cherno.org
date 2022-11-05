@@ -348,14 +348,14 @@ class vector{
     public:
         vector(){}
         vector(float a,float b):x(a),y(b){}
-
+        // ADD
         vector add(const vector& other){
             return vector(x+other.x, y+other.y);
             }
         vector operator+(const vector& other){
             return add(other);
             }
-
+        // MULTIPLY
         vector multiply(const vector& other){
             return *this *(other);
             // return (*this).operator*(other);
@@ -364,7 +364,7 @@ class vector{
         vector operator*(const vector& other){
             return vector(x*other.x, y*other.y);
             }
-
+        // BOOLEAN
         bool operator==(const vector& other){
             return x==other.x && y==other.y;
             }
@@ -387,8 +387,3 @@ int main(){
     cout<<endl<<b;
     }
 #+end_src
-
-#+RESULTS:
-: 81.26
-: 30.84
-: 1
