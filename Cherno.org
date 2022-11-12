@@ -134,7 +134,9 @@ int main()
 #+end_src
 - Result is linking error
 - Use static or Inline(not always work, it's a requst) before function defination in log.h
-
+* Pause
+- system("pause>nul");
+- std::cin.get();
 * Variables
 - Char change numeric value to alphabet through ascii, int change alphabet value to numeric through ascii.
 - Use f to define variable as a float, or it consider as double.
