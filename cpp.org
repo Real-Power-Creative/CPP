@@ -53,6 +53,9 @@
   {return(x+y);}
 #+end_src
 
+#+RESULTS:
+: 11
+
 ** Default Arguments
 #+begin_src C++
     #include<iostream>
@@ -386,8 +389,8 @@ int main(){
 - never static
 - solve initialization problem
 
-- When developer not create any constructor in class then, compiler create Default & Copy constuctor.
-- Compiler always call Default & Copy constuctor, when a object created.
+- When developer not create any constructor in class then, compiler create Default & Copy constructor.
+- Compiler always call Default & Copy constructor, when a object created.
 ** Public Constructor
 #+begin_src C++ :results output
   #include<iostream>
@@ -411,7 +414,7 @@ int main(){
 
 #+RESULTS:
 
-** Private Construtor
+** Private Constructor
 #+begin_src C++ :results output
 #include<iostream>
 using namespace std;
@@ -474,7 +477,7 @@ int main(){
 : constructor of A
 : constructor of B
 
-** Delete Compilar Constructor
+** Delete Compiler Constructor
 #+begin_src C++ :results output
 #include<iostream>
 using namespace std;
@@ -1007,7 +1010,9 @@ class Box{
     int l,b,h; //this
     public:
         void set_data(int l,int b,int h)
-        {this->l=l,this->b=b,this->h=h;}
+        {   Box *const b1=this;
+            Box &b2=*this;
+            b1->l=l,b2.b=b,this->h=h;}
         void show_data(){cout<<l<<" "<<b<<" "<<h;}
     };
 int main(){
@@ -1494,3 +1499,131 @@ int main(){
 
 #+RESULTS:
 : 2
+
+#  LocalWords:  Initializers Destructor Const Cpp Unary Pre
+* Smart pointers
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Example{
+    public:
+        Example(){cout<<"constructor created"<<endl;}
+        ~Example(){cout<<"destructor called"<<endl;}
+    };
+class ScopedExample{
+    Example *p;
+    public:
+        ScopedExample(Example *ptr):p(ptr){}
+        ~ScopedExample(){delete p;}
+    };
+int main(){
+    {
+        Example *e1=new Example();
+        ScopedExample e2=new Example(); // ScopedExample e2(new Example())
+    }
+    }
+#+end_src
+
+#+RESULTS:
+: constructor created
+: constructor created
+: destructor called
+
+** Unique Pointer
+#+begin_src C++ :results output
+#include<iostream>
+#include<memory>
+using namespace std;
+class Example{
+    public:
+        Example(){cout<<"constructor created"<<endl;}
+        ~Example(){cout<<"destructor called"<<endl;}
+    };
+int main(){
+    {
+        unique_ptr<Example> e0;
+        unique_ptr<Example> e1(new Example());
+        unique_ptr<Example> e2=make_unique<Example>();
+        // unique_ptr<Example> e3=e2; // error, copy constructor & copy assignment operator are deleted
+    }
+    {
+        unique_ptr<int> i1=make_unique<int>(25);
+        unique_ptr<int> i2=move(i1);
+        cout<<*i2<<endl;
+        // cout<<*i1<<endl; // nullptr exception thrown
+    }
+    }
+#+end_src
+
+#+RESULTS:
+: constructor created
+: constructor created
+: destructor called
+: destructor called
+: 25
+
+** Shared Pointer
+#+begin_src C++ :results output
+#include<iostream>
+#include<memory>
+using namespace std;
+class Example{
+    public:
+        Example(){cout<<"constructor created"<<endl;}
+        ~Example(){cout<<"destructor called"<<endl;}
+    };
+int main(){
+    {
+        shared_ptr<Example> e1;
+        {
+            cout<<"Shared count "<<e1.use_count()<<endl;
+            shared_ptr<Example> e2=make_shared<Example>();
+            e1=e2;
+            cout<<"Shared count "<<e1.use_count()<<endl;
+        }
+        cout<<"Shared count "<<e1.use_count()<<endl;
+    }
+    }
+#+end_src
+
+#+RESULTS:
+: Shared count 0
+: constructor created
+: Shared count 2
+: Shared count 1
+: destructor called
+** Weak Pointer
+#+begin_src C++ :results output
+#include<iostream>
+#include<memory>
+using namespace std;
+void count(weak_ptr<int> &w,shared_ptr<int> &s){
+    cout<<"Weak count "<<w.use_count()<<endl<<"Shared count "<<s.use_count()<<endl;
+    }
+int main(){
+    weak_ptr<int> w0;
+    {
+        shared_ptr<int> s1=make_shared<int>(24);
+        w0=s1;
+        count(w0,s1);
+        {
+            // shared_ptr<int> s2=w0; // error, shared_ptr can't point to a weak_ptr
+            shared_ptr<int> s2=s1;
+            count(w0,s2);
+        }
+        count(w0,s1);
+    }
+    cout<<"Weak count "<<w0.use_count()<<endl;
+    cout<<"Weak Expired? "<<w0.expired()<<endl;
+    }
+#+end_src
+
+#+RESULTS:
+: Weak count 1
+: Shared count 1
+: Weak count 2
+: Shared count 2
+: Weak count 1
+: Shared count 1
+: Weak count 0
+: Weak Expired? 1
