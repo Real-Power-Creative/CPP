@@ -389,3 +389,46 @@ int main(){
     cout<<endl<<b;
     }
 #+end_src
+* Deep Copy
+#+begin_src C++ :results output
+#include<iostream>
+#include<string.h>
+using namespace std;
+class myString{
+    char *my_buffer;
+    unsigned int my_string_size;
+    public:
+        myString(const char *s){
+            my_string_size=strlen(s);
+            my_buffer=new char[my_string_size+1];
+            memcpy(my_buffer,s,my_string_size);
+            my_buffer[my_string_size]= *"\0";
+            }
+        // myString(const myString &str):my_buffer(str.my_buffer),my_string_size(str.my_string_size){}
+        // myString(const myString &str){memcpy(this,&str,sizeof(myString))}
+        myString(const myString &str):my_string_size(str.my_string_size){
+            my_buffer=new char[my_string_size+1];
+            memcpy(my_buffer,str.my_buffer,my_string_size+1);
+            }
+        ~myString(){
+            delete []my_buffer;
+            }
+        char& operator [](unsigned int index){return my_buffer[index];}
+        friend ostream &operator<<(ostream&,const myString&);
+};
+ostream &operator <<(ostream &dout,const myString &st){
+    dout<<st.my_buffer;
+    return(dout);
+}
+int main(){
+    myString s1="Dragon";
+    myString s2=s1;
+    s2[1]= *"a";
+    s2[2]= *"r";
+    cout<<s1<<endl<<s2;
+    }
+#+end_src
+
+#+RESULTS:
+: Dragon
+: Dargon
