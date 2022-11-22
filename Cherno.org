@@ -432,3 +432,53 @@ int main(){
 #+RESULTS:
 : Dragon
 : Dargon
+
+* Arrow operator
+#+begin_src C++ :results output
+#include<iostream>
+#include<cstdint>
+using namespace std;
+struct Vector3{
+    float x,z,y;
+    };
+int main(){
+    Vector3* p = new Vector3;
+    // uint64_t offset = (uint64_t)&(*(Vector3*)0).y;
+    uint64_t offset = ((uint64_t)&((Vector3*)p)->z) - ((uint64_t)p);
+    cout<<offset<<endl;
+    cout << (int*) &((Vector3*)nullptr) -> z << endl;
+    // cout << (intptr_t) &((Vector3*) nullptr) -> z << endl;
+    }
+#+end_src
+
+#+RESULTS:
+: 4
+: 0x4
+
+The arrow operator can also be used with "trailing return type" syntax (c++11).
+
+For example:
+
+#+begin_src C++ :results output
+auto function1(int value) -> int
+{
+    return value;
+}
+
+// which is the same as:
+
+auto function2(int value) -> decltype(value)
+{
+    return value;
+}
+
+// This is the exact same thing as: (C++14)
+
+decltype(auto) function3(int value)
+{
+    return value;
+}
+int main(){}
+#+end_src
+
+#+RESULTS:
