@@ -33,6 +33,37 @@ g++ test.cpp -S -O2 -o hello.s
 ** Pragma
 #pragma GCC optimize("Ofast")
 #pragma GCC target("avx,avx2,fma")
+** vector optimize
+#+begin_src C++ :results output
+#include<iostream>
+#include<vector>
+using namespace std;
+struct Vertex{
+    float x,y,z;
+    Vertex(float x,float y,float z):x(x),y(y),z(z){}
+    Vertex(const Vertex& vertex):x(vertex.x),y(vertex.y),z(vertex.z){
+        cout<<"copied"<<endl;
+        }
+    };
+int main(){
+    vector<Vertex> vertices;
+    vertices.reserve(3);
+    cout<<vertices.capacity()<<endl;
+    // vertices.push_back({1,2,3});
+    // vertices.push_back({4,5,6});
+    // vertices.push_back(Vertex(7,8,9));
+    vertices.emplace_back(1,2,3);//moves
+    Vertex v{4,5,6};
+    vertices.emplace_back(v);//copied
+    vertices.emplace_back(Vertex(7,8,9));//copied
+    }
+#+end_src
+
+#+RESULTS:
+: 3
+: copied
+: copied
+
 * Linker
 ** Custom entry point
 *** Windows
@@ -482,3 +513,20 @@ int main(){}
 #+end_src
 
 #+RESULTS:
+* Return multiple values
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+struct values{int x;float y;};
+values fun(bool flg){
+    if(flg) return {1,2.5};
+    }
+int main(){
+    values v;
+    v=fun(true);
+    cout<<v.x<<v.y;
+    }
+#+end_src
+
+#+RESULTS:
+: 12.5
