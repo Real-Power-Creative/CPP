@@ -6,6 +6,7 @@ g++ -Wall -Werror -std=c++14 test.cpp -o test
 - #include "any.h"
 - #define find replace
 - #if 1 /*code*/ #endif
+- use \ for multiline macro
 ** Windows(Visual Studio)
 right click on project -> Properties -> C/C++ -> Preprocessor -> Preprocess to a file: yes
 ** Linux
