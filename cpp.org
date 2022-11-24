@@ -1759,3 +1759,146 @@ int main(){
 1,2,3
 
 #+end_example
+** Pair(Two value)
+#+begin_src C++ :results output
+#include<iostream>
+#include<utility>
+using namespace std;
+std::pair<int, int> divide(int dividend, int divisor)
+{
+   int quotient=dividend / divisor;
+   int remainder=dividend % divisor;
+   return std::make_pair(quotient, remainder);
+}
+int main(){
+std::pair<int, int> answer = divide(14,3);
+    cout<<answer.first <<" == quotient ";
+    cout<<answer.second << " == remainder";
+}
+#+end_src
+
+#+RESULTS:
+: 4 == quotient 2 == remainder
+
+** Tuple(Multiple value)
+#+begin_src C++ :results output
+#include<iostream>
+#include<tuple>
+using namespace std;
+int main(){
+    tuple<string,int,int> t1;
+    t1=make_tuple("India",16,10);
+    cout<<get<0>(t1)<<endl;
+    cout<<get<1>(t1)<<endl;
+    cout<<get<2>(t1)<<endl;
+    }
+#+end_src
+
+#+RESULTS:
+: India
+: 16
+: 10
+
+*** Tie Function
+#+begin_src C++ :results output
+// packing/unpacking tuples
+#include <iostream>     // std::cout
+#include <tuple>        // std::tuple, std::make_tuple, std::tie
+
+int main ()
+{
+  int myint;
+  char mychar;
+
+  std::tuple<int,float,char> mytuple;
+
+  mytuple = std::make_tuple (10, 2.6, 'a');          // packing values into tuple
+
+  std::tie (myint, std::ignore, mychar) = mytuple;   // unpacking tuple into variables
+
+  std::cout << "myint contains: " << myint << '\n';
+  std::cout << "mychar contains: " << mychar << '\n';
+
+  return 0;
+}
+#+end_src
+
+#+RESULTS:
+: myint contains: 10
+: mychar contains: a
+
+*** Return multiple values
+#+begin_src C++ :results output
+#include <tuple>
+
+std::tuple<int, int> divide(int dividend, int divisor) {
+    return  std::make_tuple(dividend / divisor, dividend % divisor);
+}
+
+#include <iostream>
+
+int main() {
+    using namespace std;
+
+    int quotient, remainder;
+
+    tie(quotient, remainder) = divide(14, 3);
+
+    cout << quotient << ',' << remainder << endl;
+}
+#+end_src
+
+#+RESULTS:
+: 4,2
+
+In C++17:
+
+#+begin_src C++ :results output
+#include <tuple>
+
+std::tuple<int, int> divide(int dividend, int divisor) {
+    return  {dividend / divisor, dividend % divisor};
+}
+
+#include <iostream>
+
+int main() {
+    using namespace std;
+
+    auto [quotient, remainder] = divide(14, 3);
+
+    cout << quotient << ',' << remainder << endl;
+}
+#+end_src
+
+#+RESULTS:
+: 4,2
+
+or with structs:
+
+#+begin_src C++ :results output
+auto divide(int dividend, int divisor) {
+    struct result {int quotient; int remainder;};
+    return result {dividend / divisor, dividend % divisor};
+}
+
+#include <iostream>
+
+int main() {
+    using namespace std;
+
+    auto result = divide(14, 3);
+
+    cout << result.quotient << ',' << result.remainder << endl;
+
+    // or
+
+    auto [quotient, remainder] = divide(14, 3);
+
+    cout << quotient << ',' << remainder << endl;
+}
+#+end_src
+
+#+RESULTS:
+: 4,2
+: 4,2
