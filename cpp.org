@@ -120,6 +120,45 @@ void fun(){cout<<"fun";}
 #+RESULTS:
 : fun
 
+** Function Pointer
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+void HelloWorld(){cout<<"hello world"<<endl;}
+int main(){
+    void(*func)() = &HelloWorld;
+    // auto func = HelloWorld;
+    func();
+    typedef void(*hello_world)();
+    hello_world h1=HelloWorld;
+    }
+#+end_src
+
+#+RESULTS:
+: hello world
+
+#+begin_src C++ :results output
+#include<iostream>
+#include<vector>
+using namespace std;
+void printValue(int val){cout<<val<<endl;}
+void ForEach(const vector<int>& v, void(*func)(int))
+    {for(int var:v){func(var);}}
+int main(){
+    vector<int> v1={2,3,4,6,7,8,9};
+    ForEach(v1,printValue);
+    }
+#+end_src
+
+#+RESULTS:
+: 2
+: 3
+: 4
+: 6
+: 7
+: 8
+: 9
+
 * Operator Overloading
 ** Binary
 #+begin_src C++ :results output
@@ -316,12 +355,14 @@ int main(){
 * Lambda Function
 #+begin_src C++ :results output
 #include<iostream>
+#include<functional>
 using namespace std;
 int main(){
     auto l=[n=2]()mutable{n++;return n*2;};
     cout<<l();
     // cout<<[n=2](){return n*2;}();
-    auto a=[](int num){return num*2;};
+    // auto a=[](int num){return num*2;};
+    const function<int(int)> &a=[](int num){return num*2;};
     cout<<a(3);
     // cout<<[](int num){return num*2;}(3);
     }
@@ -1922,3 +1963,82 @@ int main() {
 #+RESULTS:
 : 4,2
 : 4,2
+
+** Map
+#+begin_src C++ :results output
+#include<iostream>
+#include<map>
+using namespace std;
+int main(){
+    map <int,string> c1;
+    c1[100]= "hello";
+    c1[102]= "world";
+    map <int,string> c2{{100,"Hello"},{102,"World"}};
+    }
+#+end_src
+
+#+RESULTS:
+** Array
+#+begin_src C++ :results output
+#include<iostream>
+#include<array>
+using namespace std;
+template<class T, size_t I>
+void printArray(array<T, I> a)
+{
+    for (auto &i : a)
+    {
+        cout << i << '\n';
+    }
+}
+
+int main()
+{
+    array<int, 3> intArray {1, 2, 3};
+    array<double, 2> doubleArray {2.3, 5.5};
+    cout << "Printing Int Array" << '\n';
+    printArray(intArray);
+    cout << "Printing Double Array" << '\n';
+    printArray(doubleArray);
+
+    return 0;
+}
+#+end_src
+
+#+RESULTS:
+: Printing Int Array
+: 1
+: 2
+: 3
+: Printing Double Array
+: 2.3
+: 5.5
+
+#+begin_src C++ :results output
+#include <iostream>
+#include <array>
+
+void PrintArray(const auto& data)
+{
+        std::cout << "[";
+        for (unsigned i = 0; i < data.size(); i++){
+                std::cout << data[i];
+                if (i == data.size() - 1)
+                        std::cout << "]";
+                else
+                        std::cout << ", ";
+        }
+        std::cout << std::endl;
+}
+
+int main()
+{
+        std::array <int, 5> data;
+        data = {0, 5, 9, 8, 6};
+        PrintArray(data);
+        return 0;
+}
+#+end_src
+
+#+RESULTS:
+: [0, 5, 9, 8, 6]
