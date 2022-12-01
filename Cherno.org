@@ -531,3 +531,188 @@ int main(){
 
 #+RESULTS:
 : 12.5
+* Timing
+#+begin_src C++ :results output
+#include<iostream>
+#include<chrono>
+#include<thread>
+int main(){
+    using namespace std::literals::chrono_literals;
+    auto start = std::chrono::high_resolution_clock::now();
+    std::this_thread::sleep_for(1s);
+    auto end = std::chrono::high_resolution_clock::now();
+
+    std::chrono::duration<float> dura = end - start;
+    std::cout<<dura.count()<<"s"<<std::endl;
+    }
+#+end_src
+
+#+RESULTS:
+: 1.00007s
+
+#+begin_src C++ :results output
+#include<iostream>
+#include<chrono>
+#include<thread>
+struct Timer{
+    // std::chrono::time_point<std::chrono::steady_clock> start,end;
+    std::chrono::high_resolution_clock::time_point start,end;
+    std::chrono::duration<float> dura;
+    Timer(){start = std::chrono::high_resolution_clock::now();}
+    ~Timer(){
+        end = std::chrono::high_resolution_clock::now();
+        dura = end - start;
+        float ms = dura.count() * 1000.0f;
+        std::cout<<"Timer took"<<ms<<"ms"<<std::endl;
+        }
+    };
+void func(){
+    Timer t1;
+    for(int i=0;i<100;i++){}
+    }
+int main(){
+    func();
+    }
+#+end_src
+
+#+RESULTS:
+: Timer took0.000491ms
+
+* Multidimentional Array
+#+begin_src C++ :results output
+#include<iostream>
+int main(){
+    // 2 dimensional array
+    int** a2d = new int*[5];
+    for(int i=0;i<5;i++)
+        a2d[i]=new int[5];
+    a2d[0][0]=4;
+
+    for(int y=0;y<5;y++){
+        for(int x=0;x<5;x++)
+            a2d[x][y]=2;
+        }
+
+    for(int i=0;i<5;i++)
+        delete[] a2d[i];
+    delete[] a2d;
+    // 1d array represent 2d array
+    int* array2d=new int[5*5];
+    for(int y=0;y<5;y++){
+        for(int x=0;x<5;x++)
+            array2d[x+y*5]=2;
+        }
+
+    // 3 dimensional array
+    int*** a3d=new int**[5];
+    for(int i=0; i<5; i++){
+        a3d[i]=new int*[5];
+        for(int j=0;j<5;j++){
+            // a3d[i][j]=new int[5];
+            int **ptr=a3d[i];
+            ptr[j]=new int[5];
+            }
+        }
+    a3d[0][0][0]=2;
+
+    for(int i=0;i<5;i++){
+        for(int j=0;j<5;j++)
+            delete[] a3d[i][j];
+        }
+    delete[] a3d;
+    // 1d array represent 2d array
+    int* array3d=new int[5*5*5];
+    for(int z=0;z<5;z++){
+        for(int y=0;y<5;y++){
+            for(int x=0;x<5;x++)
+            {array3d[x+(y*5)+(z*5*5)]=2;}
+        }
+    }
+    }
+#+end_src
+
+#+RESULTS:
+
+* Type Punning
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+struct example{
+    int x,y;
+    int* getPos(){return &x;}
+};
+int main(){
+    int a=50;
+    const double &var1=a;
+    cout<<var1<<endl;
+    double var2=*(double*)&a;
+    cout<<var2<<endl;
+
+    example e1={2,3};
+    int* pos=(int*)&e1;
+    cout<<pos[0]<<","<<pos[1]<<endl;
+    int b=*(int*)((char*)&e1+4);
+    cout<<b<<endl;
+    int* pos1=e1.getPos();
+    int c=*(int*)((char*)pos1+4);
+    cout<<c<<endl;
+    cout<<&e1<<endl<<pos;
+    }
+#+end_src
+
+#+RESULTS:
+: 50
+: -4.30469e+82
+: 2,3
+: 3
+: 3
+: 0x7ffe8669e030
+: 0x7ffe8669e030
+
+* Union
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+struct Vector2{float x,y;};
+struct Vector4{
+    float m,n,o,p;
+    Vector2* getA(){return (Vector2*)&m;}
+};
+struct Vector_Four{
+    union{
+        struct{float a,b,c,d;};
+        struct{Vector2 e,f;};
+        };
+};
+void print2(const Vector2& v){cout<<v.x<<","<<v.y<<endl;}
+int main(){
+    struct s{union{float a;int b;};};
+    s s1;
+    s1.a=2.0f;
+    cout<<s1.a<<","<<s1.b<<endl;
+
+    Vector4 v41={1.0f,2.0f,3.0f,4.0f};
+    print2(*v41.getA());
+    print2(*(v41.getA()+1));
+
+    Vector_Four v42={1.0f,2.0f,3.0f,4.0f};
+    print2(v42.e);
+    print2(v42.f);
+    v42.c=5.0f;
+    print2(v42.e);
+    print2(v42.f);
+    }
+#+end_src
+
+#+RESULTS:
+: 2,1073741824
+: 1,2
+: 3,4
+: 1,2
+: 3,4
+: 1,2
+: 5,4
+* Casting
+* Precompiled Headers
+- g++ -std=c++11 pch.h
+- time g++ -std=c++11 main.cpp
