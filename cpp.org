@@ -623,6 +623,48 @@ int main(){
 #+end_src
 
 #+RESULTS:
+** Virtual Destructor
+#+begin_src C++ :results output
+#include<iostream>
+using namespace std;
+class Base{
+    public:
+        Base(){cout<<"Base Constructor\n";}
+        virtual ~Base(){cout<<"Base Destructor\n";}
+};
+class Derived:public Base{
+    int* m_Array;
+    public:
+        Derived(){m_Array=new int[5];cout<<"Derived Constructor\n";}
+        ~Derived(){delete[] m_Array;cout<<"Derived Destructor\n";}
+};
+int main(){
+    Base* base=new Base();
+    delete base;
+    cout<<"-----------------------\n";
+    Derived* derived=new Derived();
+    delete derived;
+    cout<<"-----------------------\n";
+    Base* poly=new Derived();
+    delete poly;
+    }
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Base Constructor
+Base Destructor
+-----------------------
+Base Constructor
+Derived Constructor
+Derived Destructor
+Base Destructor
+-----------------------
+Base Constructor
+Derived Constructor
+Derived Destructor
+Base Destructor
+#+end_example
 
 * Friend Function
 - Access any member of class indirectly.
@@ -2042,3 +2084,85 @@ int main()
 
 #+RESULTS:
 : [0, 5, 9, 8, 6]
+* Thread
+#+begin_src C++ :results output
+#include<iostream>
+#include<chrono>
+#include<thread>
+using namespace std;
+using namespace std::literals::chrono_literals;
+void sayhello(string name){
+    cout<<"sayhello"<<this_thread::get_id()<<endl;
+    for(int i=0; i<5 ;i++){
+        this_thread::sleep_for(chrono::milliseconds(100));
+        cout<<"hello"<<name<<endl;
+        }
+    }
+class classThread{
+    public:
+        void operator()(string name){
+            for(int i=0; i<5 ;i++){
+                this_thread::sleep_for(chrono::milliseconds(100));
+                cout<<"hello"<<name<<endl;
+            }
+            }
+    };
+void foo(){
+    cout<<"foo started\n";
+    thread det(sayhello,"detached");
+    det.detach();
+    cout<<"foo ended\n";
+    }
+int main(){
+    thread funcptr(sayhello,"world");
+    thread lambdaptr([](string name){
+        for(int i=0; i<5 ;i++){
+            this_thread::sleep_for(chrono::milliseconds(100));
+            cout<<"hello"<<name<<endl;
+        }
+        },"lambda");
+    thread class_thread(classThread(),"class");
+
+    cout<<"functhread id = "<<funcptr.get_id()<<endl;
+    cout<<"lambdathread id = "<<lambdaptr.get_id()<<endl;
+    cout<<"classthread id = "<<class_thread.get_id()<<endl;
+
+    funcptr.join();
+    lambdaptr.join();
+    class_thread.join();
+    foo();
+
+    cout<<"functhread id = "<<funcptr.get_id()<<endl;
+    cout<<"lambdathread id = "<<lambdaptr.get_id()<<endl;
+    cout<<"classthread id = "<<class_thread.get_id()<<endl;
+    }
+#+end_src
+
+#+RESULTS:
+#+begin_example
+sayhello140045420250688
+functhread id = 140045420250688
+lambdathread id = 140045410223680
+classthread id = 140045265978944
+helloworld
+hellolambda
+helloclass
+hellolambdahello
+world
+helloclass
+helloworldhello
+hellolambdaclass
+
+helloworld
+helloclass
+hellolambda
+helloworld
+hellohellolambdaclass
+
+foo started
+foo ended
+functhread id = thread::id of a non-executing thread
+lambdathread id = thread::id of a non-executing thread
+classthread id = thread::id of a non-executing thread
+sayhello140045265978944
+#+end_example
