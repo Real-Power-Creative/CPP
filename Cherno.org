@@ -19,9 +19,12 @@ right click on project -> Properties -> C/C++ -> Output Files -> Assembler Outpu
 *** Readable
 g++ test.cpp -S -o hello.s
 *** Non-Readable
-g++ -c test.cpp
-g++ -c main.cpp
-g++ -c mainexe main.o test.o
+test.o: test.cpp test.h
+    g++ -c test.cpp
+main.o: main.cpp test.h
+    g++ -c main.cpp
+main: main.o test.o
+    g++ -c mainexe main.o test.o
 
 - Check for dependencies
   g++ -MM main.cpp
@@ -620,7 +623,7 @@ int main(){
             delete[] a3d[i][j];
         }
     delete[] a3d;
-    // 1d array represent 2d array
+    // 1d array represent 3d array
     int* array3d=new int[5*5*5];
     for(int z=0;z<5;z++){
         for(int y=0;y<5;y++){
