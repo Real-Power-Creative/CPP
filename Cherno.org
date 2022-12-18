@@ -439,9 +439,9 @@ class myString{
             memcpy(my_buffer,s,my_string_size);
             my_buffer[my_string_size]= *"\0";
             }
-        // myString(const myString &str):my_buffer(str.my_buffer),my_string_size(str.my_string_size){}
-        // myString(const myString &str){memcpy(this,&str,sizeof(myString))}
-        myString(const myString &str):my_string_size(str.my_string_size){
+        // myString(const myString &str):my_buffer(str.my_buffer),my_string_size(str.my_string_size){} //compilar do, shallow copy
+        // myString(const myString &str){memcpy(this,&str,sizeof(myString))} //alternative shallow copy
+        myString(const myString &str):my_string_size(str.my_string_size){ //deep copy
             my_buffer=new char[my_string_size+1];
             memcpy(my_buffer,str.my_buffer,my_string_size+1);
             }
@@ -459,7 +459,7 @@ int main(){
     myString s1="Dragon";
     myString s2=s1;
     s2[1]= *"a";
-    s2[2]= *"r";
+    s2[2]= 'r';
     cout<<s1<<endl<<s2;
     }
 #+end_src
